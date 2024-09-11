@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::entrypoint::ProgramResult;
 
-declare_id!("Fm52pPHemzrbA8FGjh2KTYjJYju3SGstnJwoJTCkESkm");
+declare_id!("9hcxbmQq18uCcSTs9zMKAHivEYrfJ9DF3FMn5LhgD3n8");
 
 #[program]
 pub mod subscription_processor {
@@ -49,7 +49,13 @@ pub mod subscription_processor {
 
 #[derive(Accounts)]
 pub struct Initialize<'info> {
-    #[account(init, payer = authority, space = 8 + 32 + 8 + 8 + 8 + 1000)] // Increased space for subscribers
+    #[account(
+        init,
+        seeds = [b"account"],
+        bump,
+        payer = authority,
+        space = 2048,
+    )]
     pub subscription_account: Account<'info, SubscriptionAccount>,
     #[account(mut)]
     pub authority: Signer<'info>,
@@ -58,13 +64,12 @@ pub struct Initialize<'info> {
 
 #[derive(Accounts)]
 pub struct Subscribe<'info> {
-    #[account(mut)]
+    #[account(mut, seeds = [b"account"], bump)]
     pub subscription_account: Account<'info, SubscriptionAccount>,
     #[account(mut)]
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
-
 
 #[account]
 pub struct SubscriptionAccount {
